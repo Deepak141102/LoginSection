@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
+
 
 const WelcomePage = () => {
   const [username, setUsername] = useState('');
@@ -77,16 +79,16 @@ const WelcomePage = () => {
         )}
 
         {/* Navigation Links */}
-        <div className="mt-12 space-y-4">
-          <a href="#about" className="block text-[#08fdd8] hover:text-[#ff0099] transition-all duration-300 transform hover:translate-x-2">
+        <div className="mt-12 space-y-4 text-[#08fdd8]">
+          <Link to="/work-in-progress/about" className="block hover:underline">
             Learn More About Us
-          </a>
-          <a href="#services" className="block text-[#08fdd8] hover:text-[#ff0099] transition-all duration-300 transform hover:translate-x-2">
+          </Link>
+          <Link to="/work-in-progress/services" className="block hover:underline">
             Discover Our Services
-          </a>
-          <a href="#contact" className="block text-[#08fdd8] hover:text-[#ff0099] transition-all duration-300 transform hover:translate-x-2">
+          </Link>
+          <Link to="/work-in-progress/contact" className="block hover:underline">
             Get in Touch
-          </a>
+          </Link>
         </div>
       </div>
 
