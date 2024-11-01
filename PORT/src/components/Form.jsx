@@ -43,14 +43,23 @@ const Form = () => {
   };
 
   const loginSubmit = (values) => {
+    if (!values.email || !values.password || !values.checkBox) {
+      alert("Please fill in all required fields.");
+      return; // Prevent navigation if fields are empty
+    }
     console.log("Form submitted with values:", values);
     navigate("/welcome"); 
   };
-
+  
   const registerSubmit = (values) => {
+    if (!values.email || !values.password || !values.confirmPassword || !values.checkBox) {
+      alert("Please fill in all required fields.");
+      return; // Prevent navigation if fields are empty
+    }
     console.log("Form submitted with values:", values);
     navigate("/welcome"); 
   };
+  
 
   return (
     <div className="bg-gradient-to-r from-blue-900 via-purple-900 to-black h-screen flex justify-center items-center relative overflow-hidden">
