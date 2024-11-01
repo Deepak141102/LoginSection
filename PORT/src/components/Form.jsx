@@ -64,11 +64,11 @@ const Form = () => {
   return (
     <div className="bg-gradient-to-r from-blue-900 via-purple-900 to-black h-screen flex justify-center items-center relative overflow-hidden">
       <div
-        className={`neon-border w-1/3 max-md:w-10/12 h-[90vh] rounded-xl p-8 shadow-2xl flex flex-col relative backdrop-blur-lg bg-opacity-30 bg-black transition-all duration-300 ${
+        className={`neon-border w-1/3 max-md:w-[96%]  h-[90vh] rounded-xl p-8 shadow-2xl flex flex-col relative backdrop-blur-lg bg-opacity-30 bg-black transition-all duration-300 ${
           formTransition ? "opacity-0" : "opacity-100"
         }`}
         style={{
-          transform: register ? "translateY(0)" : "translateY(0)",
+          transform: register ? "translateY(0%)" : "translateY(0%)",
           transition: "transform 0.3s ease",
         }}
       >
