@@ -9,16 +9,25 @@ const Form = () => {
   const navigate = useNavigate(); // Initialize navigate function
 
   const validationSchema = Yup.object({
-    email: Yup.string().email("Invalid email address").required("Email is required"),
-    password: Yup.string().min(6, "Password must be at least 6 characters").required("Password is required"),
-    CcEmail: Yup.array().of(Yup.string().email("Invalid email address")),
+    email: Yup.string()
+      .email("Invalid email address")
+      .required("Email is required"),
+    password: Yup.string()
+      .min(6, "Password must be at least 6 characters")
+      .required("Password is required"),
     checkBox: Yup.string().required("Select your Gender"),
   });
 
   const regiValidationSchema = Yup.object({
-    email: Yup.string().email("Invalid email address").required("Email is required"),
-    password: Yup.string().min(6, "Password must be at least 6 characters").required("Password is required"),
-    confirmPassword: Yup.string().oneOf([Yup.ref("password"), null], "Passwords must match").required("Confirm Password is required"),
+    email: Yup.string()
+      .email("Invalid email address")
+      .required("Email is required"),
+    password: Yup.string()
+      .min(6, "Password must be at least 6 characters")
+      .required("Password is required"),
+    confirmPassword: Yup.string()
+      .oneOf([Yup.ref("password"), null], "Passwords must match")
+      .required("Confirm Password is required"),
     checkBox: Yup.string().required("Select your Gender"),
   });
 
@@ -43,23 +52,14 @@ const Form = () => {
   };
 
   const loginSubmit = (values) => {
-    if (!values.email || !values.password || !values.checkBox) {
-      alert("Please fill in all required fields.");
-      return; // Prevent navigation if fields are empty
-    }
     console.log("Form submitted with values:", values);
-    navigate("/welcome"); 
+    navigate("/welcome");
   };
-  
+
   const registerSubmit = (values) => {
-    if (!values.email || !values.password || !values.confirmPassword || !values.checkBox) {
-      alert("Please fill in all required fields.");
-      return; // Prevent navigation if fields are empty
-    }
     console.log("Form submitted with values:", values);
-    navigate("/welcome"); 
+    navigate("/welcome");
   };
-  
 
   return (
     <div className="bg-gradient-to-r from-blue-900 via-purple-900 to-black h-screen flex justify-center items-center relative overflow-hidden">
@@ -81,11 +81,10 @@ const Form = () => {
               initialValues={{
                 email: "",
                 password: "",
-                CcEmail: [""],
                 checkBox: "",
               }}
               validationSchema={validationSchema}
-              onSubmit={loginSubmit} // Added onSubmit for login form
+              onSubmit={loginSubmit} // This should remain here
             >
               {({
                 values,
@@ -94,8 +93,11 @@ const Form = () => {
                 handleChange,
                 handleBlur,
                 setFieldValue,
+                handleSubmit, // Add this line to get handleSubmit from Formik
               }) => (
-                <form onSubmit={loginSubmit} className="space-y-6">
+                <form onSubmit={handleSubmit} className="space-y-6">
+                  {" "}
+                  {/* Change onSubmit here */}
                   {/* Email Field */}
                   <div className="relative neon-input-wrapper flex flex-col">
                     <label htmlFor="email" className="form-label neon-text">
@@ -116,7 +118,6 @@ const Form = () => {
                       </p>
                     )}
                   </div>
-
                   {/* Password Field */}
                   <div className="relative neon-input-wrapper flex flex-col">
                     <label htmlFor="password" className="form-label neon-text">
@@ -137,7 +138,6 @@ const Form = () => {
                       </p>
                     )}
                   </div>
-
                   {/* Gender Selection */}
                   <div className="relative flex flex-col gap-2 p-5 rounded-lg neon-input-wrapper border-[2px] border-dashed border-[#08fdd8]">
                     <h1 className="form-label neon-text">Select Gender</h1>
@@ -165,7 +165,6 @@ const Form = () => {
                       <p className="text-red-500">{errors.checkBox}</p>
                     )}
                   </div>
-
                   {/* Submit Button */}
                   <div className="my-5 flex justify-center">
                     <button type="submit" className="submit-button neon-button">
@@ -175,6 +174,7 @@ const Form = () => {
                 </form>
               )}
             </Formik>
+
             <div className="flex justify-center space-x-3 text-white my-3">
               Don't have an account?
               <a
@@ -192,126 +192,129 @@ const Form = () => {
               Register
             </h1>
             <Formik
-              initialValues={{
-                email: "",
-                password: "",
-                confirmPassword: "",
-                checkBox: "",
-              }}
-              validationSchema={regiValidationSchema}
-              onSubmit={registerSubmit} // Consistent onSubmit prop for register form
+  initialValues={{
+    email: "",
+    password: "",
+    confirmPassword: "",
+    checkBox: "",
+  }}
+  validationSchema={regiValidationSchema}
+  onSubmit={registerSubmit} // This ensures the correct function is called on submission
+>
+  {({
+    values,
+    errors,
+    touched,
+    handleChange,
+    handleBlur,
+  }) => (
+    <form onSubmit={(e) => { 
+        e.preventDefault(); // Prevent default form submission
+        if (Object.keys(errors).length === 0) { // Check for validation errors
+          registerSubmit(values); // Only call the submit function if there are no errors
+        }
+      }} className="space-y-6">
+      {/* Email Field */}
+      <div className="relative neon-input-wrapper flex flex-col">
+        <label htmlFor="email" className="form-label neon-text">
+          Email
+        </label>
+        <input
+          type="email"
+          name="email"
+          id="email"
+          onChange={handleChange}
+          onBlur={handleBlur}
+          value={values.email}
+          className="form-input neon-input"
+        />
+        {touched.email && errors.email && (
+          <p className="text-red-500 absolute top-full left-0 mt-1 text-sm">
+            {errors.email}
+          </p>
+        )}
+      </div>
+
+      {/* Password Field */}
+      <div className="relative neon-input-wrapper flex flex-col">
+        <label htmlFor="password" className="form-label neon-text">
+          Password
+        </label>
+        <input
+          type="password"
+          name="password"
+          id="password"
+          onChange={handleChange}
+          onBlur={handleBlur}
+          value={values.password}
+          className="form-input neon-input"
+        />
+        {touched.password && errors.password && (
+          <p className="text-red-500 absolute top-full left-0 mt-1 text-sm">
+            {errors.password}
+          </p>
+        )}
+      </div>
+
+      {/* Confirm Password Field */}
+      <div className="relative neon-input-wrapper flex flex-col">
+        <label htmlFor="confirmPassword" className="form-label neon-text">
+          Confirm Password
+        </label>
+        <input
+          type="password"
+          name="confirmPassword"
+          id="confirmPassword"
+          onChange={handleChange}
+          onBlur={handleBlur}
+          value={values.confirmPassword}
+          className="form-input neon-input"
+        />
+        {touched.confirmPassword && errors.confirmPassword && (
+          <p className="text-red-500 absolute top-full left-0 mt-1 text-sm">
+            {errors.confirmPassword}
+          </p>
+        )}
+      </div>
+
+      {/* Gender Selection */}
+      <div className="relative flex flex-col gap-2 p-5 rounded-lg neon-input-wrapper border-[2px] border-dashed border-[#08fdd8]">
+        <h1 className="form-label neon-text">Select Gender</h1>
+        <div className="flex gap-8">
+          {["male", "female", "other"].map((gender) => (
+            <label
+              key={gender}
+              htmlFor={gender}
+              className="form-label neon-text"
             >
-              {({
-                values,
-                errors,
-                touched,
-                handleChange,
-                handleBlur,
-              }) => (
-                <form onSubmit={registerSubmit} className="space-y-6">
-                  {/* Email Field */}
-                  <div className="relative neon-input-wrapper flex flex-col">
-                    <label htmlFor="email" className="form-label neon-text">
-                      Email
-                    </label>
-                    <input
-                      type="email"
-                      name="email"
-                      id="email"
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                      value={values.email}
-                      className="form-input neon-input"
-                    />
-                    {touched.email && errors.email && (
-                      <p className="text-red-500 absolute top-full left-0 mt-1 text-sm">
-                        {errors.email}
-                      </p>
-                    )}
-                  </div>
+              <input
+                type="radio"
+                name="checkBox"
+                id={gender}
+                value={gender}
+                checked={values.checkBox === gender}
+                onChange={handleChange}
+                className="radio neon-radio mt-8"
+              />
+              {gender.charAt(0).toUpperCase() + gender.slice(1)}
+            </label>
+          ))}
+        </div>
+        {touched.checkBox && errors.checkBox && (
+          <p className="text-red-500">{errors.checkBox}</p>
+        )}
+      </div>
 
-                  {/* Password Field */}
-                  <div className="relative neon-input-wrapper flex flex-col">
-                    <label htmlFor="password" className="form-label neon-text">
-                      Password
-                    </label>
-                    <input
-                      type="password"
-                      name="password"
-                      id="password"
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                      value={values.password}
-                      className="form-input neon-input"
-                    />
-                    {touched.password && errors.password && (
-                      <p className="text-red-500 absolute top-full left-0 mt-1 text-sm">
-                        {errors.password}
-                      </p>
-                    )}
-                  </div>
+      {/* Submit Button */}
+      <div className="my-5 flex justify-center">
+        <button type="submit" className="submit-button neon-button">
+          Submit
+        </button>
+      </div>
+    </form>
+  )}
+</Formik>
 
-                  {/* Confirm Password Field */}
-                  <div className="relative neon-input-wrapper flex flex-col">
-                    <label
-                      htmlFor="confirmPassword"
-                      className="form-label neon-text"
-                    >
-                      Confirm Password
-                    </label>
-                    <input
-                      type="password"
-                      name="confirmPassword"
-                      id="confirmPassword"
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                      value={values.confirmPassword}
-                      className="form-input neon-input"
-                    />
-                    {touched.confirmPassword && errors.confirmPassword && (
-                      <p className="text-red-500 absolute top-full left-0 mt-1 text-sm">
-                        {errors.confirmPassword}
-                      </p>
-                    )}
-                  </div>
-
-                  {/* Gender Selection */}
-                  <div className="relative flex flex-col gap-2 p-5 rounded-lg neon-input-wrapper border-[2px] border-dashed border-[#08fdd8]">
-                    <h1 className="form-label neon-text">Select Gender</h1>
-                    <div className="flex gap-8">
-                      {["male", "female", "other"].map((gender) => (
-                        <label
-                          key={gender}
-                          htmlFor={gender}
-                          className="form-label neon-text"
-                        >
-                          <input
-                            type="radio"
-                            name="checkBox"
-                            id={gender}
-                            value={gender}
-                            checked={values.checkBox === gender}
-                            onChange={handleChange}
-                            className="radio neon-radio mt-8"
-                          />
-                          {gender.charAt(0).toUpperCase() + gender.slice(1)}
-                        </label>
-                      ))}
-                    </div>
-                    {touched.checkBox && errors.checkBox && (
-                      <p className="text-red-500">{errors.checkBox}</p>
-                    )}
-                  </div>
-
-                  {/* Submit Button */}
-                  <div className="my-5 flex justify-center">
-                    <button type="submit" className="submit-button neon-button">
-                      Submit
-                    </button>
-                  </div>
-                </form>
-              )}
-            </Formik>
             <div className="flex justify-center space-x-3 text-white my-3">
               Already have an account?
               <a
